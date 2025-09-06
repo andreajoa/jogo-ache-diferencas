@@ -367,3 +367,185 @@ export const ModernToolbar: React.FC<ModernToolbarProps> = ({
           background: rgba(255, 255, 255, 0.1);
           border: 1px solid rgba(255, 255, 255, 0.2);
           border-radius: 12px;
+          padding: 12px;
+          color: white;
+          font-size: 0.9rem;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+        }
+        
+        .action-btn:hover {
+          background: rgba(255, 255, 255, 0.2);
+          transform: translateY(-1px);
+        }
+      `}</style>
+    </div>
+  );
+};
+
+// 📁 app/components/BrushSelector.tsx
+'use client';
+
+import React from 'react';
+
+interface BrushSelectorProps {
+  brushType: 'round' | 'square' | 'spray' | 'texture';
+  onBrushTypeChange: (type: 'round' | 'square' | 'spray' | 'texture') => void;
+  brushSize: number;
+  onBrushSizeChange: (size: number) => void;
+  brushColor: string;
+}
+
+export const BrushSelector: React.FC<BrushSelectorProps> = ({
+  brushType,
+  onBrushTypeChange,
+  brushSize,
+  onBrushSizeChange,
+  brushColor
+}) => {
+  const brushTypes = [
+    { id: 'round', icon: '●', name: 'Redondo', description: 'Clássico suave' },
+    { id: 'square', icon: '■', name: 'Quadrado', description: 'Bordas definidas' },
+    { id: 'spray', icon: '✨', name: 'Spray', description: 'Efeito aerosol' },
+    { id: 'texture', icon: '🎨', name: 'Textura', description: 'Artístico' }
+  ];
+  
+  const brushSizes = [2, 5, 10, 15, 20, 30, 50];
+  
+  return (
+    <div className="space-y-4">
+      {/* Brush types */}
+      <div>
+        <label className="text-sm font-medium text-white/80 mb-2 block">
+          Tipo de Pincel:
+        </label>
+        <div className="grid grid-cols-2 gap-2">
+          {brushTypes.map((type) => (
+            <button
+              key={type.id}
+              onClick={() => onBrushTypeChange(type.id as any)}
+              className={`brush-type-btn ${brushType === type.id ? 'active' : ''}`}
+              title={type.description}
+            >
+              <span className="text-lg">{type.icon}</span>
+              <span className="text-xs">{type.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Brush size */}
+      <div>
+        <label className="text-sm font-medium text-white/80 mb-2 block">
+          Tamanho: {brushSize}px
+        </label>
+        <div className="flex items-center space-x-2 mb-3">
+          <input
+            type="range"
+            min="1"
+            max="100"
+            value={brushSize}
+            onChange={(e) => onBrushSizeChange(parseInt(e.target.value))}
+            className="flex-1 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer"
+          />
+        </div>
+        
+        {/* Quick size buttons */}
+        <div className="flex flex-wrap gap-1">
+          {brushSizes.map((size) => (
+            <button
+              key={size}
+              onClick={() => onBrushSizeChange(size)}
+              className={`size-btn ${brushSize === size ? 'active' : ''}`}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Preview */}
+      <div className="bg-white/10 rounded-lg p-3 text-center">
+        <div className="text-white/80 text-xs mb-2">Previsão:</div>
+        <div 
+          className="mx-auto rounded-full transition-all duration-200"
+          style={{
+            width: `${Math.min(brushSize, 50)}px`,
+            height: `${Math.min(brushSize, 50)}px`,
+            backgroundColor: brushColor,
+            borderRadius: brushType === 'square' ? '2px' : '50%',
+            opacity: brushType === 'spray' ? 0.7 : 1,
+            filter: brushType === 'texture' ? 'blur(1px)' : 'none'
+          }}
+        />
+      </div>
+      
+      <style jsx>{`
+        .brush-type-btn {
+          background: rgba(255, 255, 255, 0.1);
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          border-radius: 12px;
+          padding: 8px;
+          color: white;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+          min-height: 60px;
+        }
+        
+        .brush-type-btn:hover {
+          border-color: rgba(255, 255, 255, 0.4);
+          transform: translateY(-1px);
+        }
+        
+        .brush-type-btn.active {
+          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+          border-color: transparent;
+        }
+        
+        .size-btn {
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 8px;
+          padding: 4px 8px;
+          color: white;
+          font-size: 0.75rem;
+          transition: all 0.2s ease;
+        }
+        
+        .size-btn:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .size-btn.active {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-color: transparent;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+          appearance: none;
+          height: 20px;
+          width: 20px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+          height: 20px;
+          width: 20px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+      `}</style>
+    </div>
+  );
+};
