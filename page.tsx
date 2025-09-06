@@ -1,8 +1,10 @@
+'use client';
+
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Palette, PaintBucket, Brush, Type, Eraser, Undo, Download, Frame, Sparkles, Layers, Move, RotateCcw, ZoomIn, ZoomOut, Save, Share2, Wand2, Shapes } from 'lucide-react';
 
 const PaintApp = () => {
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [currentTool, setCurrentTool] = useState('brush');
   const [brushColor, setBrushColor] = useState('#3B82F6');
   const [brushSize, setBrushSize] = useState(10);
@@ -11,11 +13,11 @@ const PaintApp = () => {
   const [showTextEditor, setShowTextEditor] = useState(false);
   const [showFrameSelector, setShowFrameSelector] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [lastPoint, setLastPoint] = useState(null);
+  const [lastPoint, setLastPoint] = useState<{x: number, y: number, pressure: number} | null>(null);
   const [textInput, setTextInput] = useState('');
   const [selectedFrame, setSelectedFrame] = useState('none');
   const [zoom, setZoom] = useState(1);
-  const [canvasHistory, setCanvasHistory] = useState([]);
+  const [canvasHistory, setCanvasHistory] = useState<string[]>([]);
   const [historyStep, setHistoryStep] = useState(-1);
   const [selectedFont, setSelectedFont] = useState('Arial');
   const [textSize, setTextSize] = useState(24);
@@ -101,18 +103,18 @@ const PaintApp = () => {
   }, [historyStep, canvasHistory]);
 
   // Obter posição do evento (mouse/touch)
-  const getEventPos = useCallback((e, canvas) => {
+  const getEventPos = useCallback((e: any, canvas: HTMLCanvasElement) => {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     
-    let clientX, clientY, pressure = 1;
+    let clientX: number, clientY: number, pressure = 1;
     
     if (e.touches) {
       const touch = e.touches[0] || e.changedTouches[0];
       clientX = touch.clientX;
       clientY = touch.clientY;
-      pressure = touch.force || 1;
+      pressure = (touch as any).force || 1;
     } else {
       clientX = e.clientX;
       clientY = e.clientY;
@@ -127,7 +129,7 @@ const PaintApp = () => {
   }, [zoom]);
 
   // Algoritmo flood fill para balde de tinta
-  const floodFill = useCallback((startX, startY, fillColor) => {
+  const floodFill = useCallback((startX: number, startY: number, fillColor: string) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     if (!ctx) return;
@@ -148,11 +150,11 @@ const PaintApp = () => {
 
     if (startR === fillR && startG === fillG && startB === fillB) return;
 
-    const pixelStack = [[startX, startY]];
-    const visited = new Set();
+    const pixelStack: [number, number][] = [[startX, startY]];
+    const visited = new Set<string>();
 
     while (pixelStack.length) {
-      const [x, y] = pixelStack.pop();
+      const [x, y] = pixelStack.pop()!;
       const key = `${x},${y}`;
       
       if (visited.has(key) || x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) continue;
@@ -177,7 +179,7 @@ const PaintApp = () => {
   }, [saveToHistory]);
 
   // Aplicar efeitos de pincel
-  const applyBrushEffect = useCallback((ctx, x, y, size, pressure) => {
+  const applyBrushEffect = useCallback((ctx: CanvasRenderingContext2D, x: number, y: number, size: number, pressure: number) => {
     const adjustedSize = size * pressure;
     
     switch (brushType) {
@@ -243,7 +245,7 @@ const PaintApp = () => {
   }, [brushType]);
 
   // Iniciar desenho
-  const startDrawing = useCallback((e) => {
+  const startDrawing = useCallback((e: any) => {
     e.preventDefault();
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -265,6 +267,7 @@ const PaintApp = () => {
 
     if (currentTool === 'brush') {
       const ctx = canvas.getContext('2d');
+      if (!ctx) return;
       ctx.globalCompositeOperation = 'source-over';
       ctx.fillStyle = brushColor;
       ctx.strokeStyle = brushColor;
@@ -273,7 +276,7 @@ const PaintApp = () => {
   }, [currentTool, brushColor, brushSize, getEventPos, floodFill, applyBrushEffect]);
 
   // Desenhar
-  const draw = useCallback((e) => {
+  const draw = useCallback((e: any) => {
     if (!isDrawing || currentTool === 'bucket') return;
     
     const canvas = canvasRef.current;
@@ -359,7 +362,7 @@ const PaintApp = () => {
     if (!canvas) return;
     
     const link = document.createElement('a');
-    link.download = `ache-diferencas-${Date.now()}.png`;
+    link.download = `arte-cutting-edge-${Date.now()}.png`;
     link.href = canvas.toDataURL();
     link.click();
   }, []);
@@ -374,7 +377,7 @@ const PaintApp = () => {
         const file = new File([blob], 'minha-arte.png', { type: 'image/png' });
         try {
           await navigator.share({
-            title: 'Minha Arte - Ache as Diferenças',
+            title: 'Minha Arte Cutting-Edge',
             files: [file]
           });
         } catch (err) {
@@ -390,6 +393,8 @@ const PaintApp = () => {
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
     const dpr = window.devicePixelRatio || 1;
     
     canvas.width = 800 * dpr;
@@ -677,7 +682,7 @@ const PaintApp = () => {
               {Object.entries(colorPalette).map(([category, colors]) => (
                 <div key={category} className="mb-4">
                   <h4 className="text-white/80 text-sm mb-2 capitalize font-medium">
-                    {categoryNames[category]}
+                    {categoryNames[category as keyof typeof categoryNames]}
                   </h4>
                   <div className="grid grid-cols-8 gap-2">
                     {colors.map((color) => (
@@ -740,7 +745,7 @@ const PaintApp = () => {
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
                     className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white resize-none"
-                    rows="3"
+                    rows={3}
                     placeholder="Digite seu texto aqui..."
                   />
                 </div>
