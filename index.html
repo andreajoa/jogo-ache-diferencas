@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criador de Jogo "Ache as Diferenças"</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #4c51bf;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        label {
+            font-weight: bold;
+            color: #4c51bf;
+            font-size: 0.9rem;
+        }
+        
+        select, input {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4c51bf;
+            box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-area {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .canvas-container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 3px solid #e2e8f0;
+        }
+        
+        .canvas-container h3 {
+            color: #4c51bf;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        canvas {
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            cursor: crosshair;
+            transition: all 0.3s ease;
+        }
+        
+        canvas:hover {
+            border-color: #4c51bf;
+            box-shadow: 0 0 15px rgba(76, 81, 191, 0.2);
+        }
+        
+        .print-area {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 15px;
+            border: 2px dashed #cbd5e0;
+        }
+        
+        .instructions {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        .tools {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tool-btn {
+            padding: 8px 15px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .tool-btn.active {
+            background: #4c51bf;
+            color: white;
+            border-color: #4c51bf;
+        }
+        
+        .tool-btn:hover {
+            border-color: #4c51bf;
+            transform: translateY(-1px);
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Criador de "Ache as Diferenças"</h1>
+            <p>Crie atividades personalizadas para desenvolver atenção e foco!</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Como usar:</h3>
+            <ol>
+                <li>Escolha um tema e desenhe na <strong>Imagem Original</strong></li>
+                <li>A <strong>Imagem com Diferenças</strong> será copiada automaticamente</li>
+                <li>Clique em "Adicionar Diferença" e modifique a segunda imagem</li>
+                <li>Imprima as duas versões para criar sua atividade!</li>
+            </ol>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="theme">🎨 Tema:</label>
+                <select id="theme">
+                    <option value="casa">Casa</option>
+                    <option value="parque">Parque</option>
+                    <option value="animais">Animais</option>
+                    <option value="escola">Escola</option>
+                    <option value="livre">Desenho Livre</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="difficulty">📊 Dificuldade:</label>
+                <select id="difficulty">
+                    <option value="facil">Fácil (3-5 diferenças)</option>
+                    <option value="medio">Médio (6-8 diferenças)</option>
+                    <option value="dificil">Difícil (9+ diferenças)</option>
+                </select>
+            </div>
+            
+            <button class="btn" onclick="generateTemplate()">🎯 Gerar Template</button>
+            <button class="btn" onclick="copyToSecond()">📋 Copiar para 2ª Imagem</button>
+            <button class="btn" onclick="clearAll()">🧹 Limpar Tudo</button>
+        </div>
+        
+        <div class="tools">
+            <div class="tool-btn active" data-tool="brush">🖌️ Pincel</div>
+            <div class="tool-btn" data-tool="eraser">🧽 Borracha</div>
+            <input type="color" id="colorPicker" value="#FF6B35" style="width: 50px; height: 35px; border-radius: 50%; border: 2px solid #e2e8f0;">
+            <input type="range" id="brushSize" min="1" max="20" value="5" style="width: 100px;">
+            <span id="brushSizeLabel">5px</span>
+        </div>
+        
+        <div class="game-area">
+            <div class="canvas-container">
+                <h3>🖼️ Imagem Original</h3>
+                <canvas id="canvas1" width="400" height="300"></canvas>
+            </div>
+            
+            <div class="canvas-container">
+                <h3>🔍 Imagem com Diferenças</h3>
+                <canvas id="canvas2" width="400" height="300"></canvas>
+                <div style="margin-top: 10px;">
+                    <button class="btn" onclick="addDifference()" style="font-size: 0.9rem; padding: 8px 15px;">➕ Modo: Adicionar Diferença</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="print-area">
+            <h3>🖨️ Pronto para Imprimir!</h3>
+            <p>Use Ctrl+P para imprimir ou salve as imagens clicando com o botão direito</p>
+            <button class="btn" onclick="window.print()">🖨️ Imprimir Atividade</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas1 = document.getElementById('canvas1');
+        const canvas2 = document.getElementById('canvas2');
+        const ctx1 = canvas1.getContext('2d');
+        const ctx2 = canvas2.getContext('2d');
+        
+        let currentTool = 'brush';
+        let isDrawing = false;
+        let currentColor = '#FF6B35';
+        let brushSize = 5;
+        let differenceMode = false;
+        
+        // Configurações iniciais
+        ctx1.fillStyle = 'white';
+        ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+        ctx2.fillStyle = 'white';
+        ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+        
+        // Event listeners para ferramentas
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentTool = e.target.dataset.tool;
+            });
+        });
+        
+        document.getElementById('colorPicker').addEventListener('change', (e) => {
+            currentColor = e.target.value;
+        });
+        
+        document.getElementById('brushSize').addEventListener('input', (e) => {
+            brushSize = e.target.value;
+            document.getElementById('brushSizeLabel').textContent = brushSize + 'px';
+        });
+        
+        // Funções de desenho
+        function startDrawing(e, canvas, ctx) {
+            isDrawing = true;
+            draw(e, canvas, ctx);
+        }
+        
+        function draw(e, canvas, ctx) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            
+            if (currentTool === 'brush') {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = currentColor;
+            } else if (currentTool === 'eraser') {
+                ctx.globalCompositeOperation = 'destination-out';
+            }
+            
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+        
+        function stopDrawing(ctx) {
+            if (isDrawing) {
+                ctx.beginPath();
+                isDrawing = false;
+            }
+        }
+        
+        // Eventos do canvas 1
+        canvas1.addEventListener('mousedown', (e) => startDrawing(e, canvas1, ctx1));
+        canvas1.addEventListener('mousemove', (e) => draw(e, canvas1, ctx1));
+        canvas1.addEventListener('mouseup', () => stopDrawing(ctx1));
+        canvas1.addEventListener('mouseout', () => stopDrawing(ctx1));
+        
+        // Eventos do canvas 2
+        canvas2.addEventListener('mousedown', (e) => startDrawing(e, canvas2, ctx2));
+        canvas2.addEventListener('mousemove', (e) => draw(e, canvas2, ctx2));
+        canvas2.addEventListener('mouseup', () => stopDrawing(ctx2));
+        canvas2.addEventListener('mouseout', () => stopDrawing(ctx2));
+        
+        // Funções principais
+        function generateTemplate() {
+            const theme = document.getElementById('theme').value;
+            
+            // Limpar canvas
+            ctx1.fillStyle = 'white';
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+            
+            // Desenhar template baseado no tema
+            ctx1.strokeStyle = '#333';
+            ctx1.lineWidth = 2;
+            
+            switch(theme) {
+                case 'casa':
+                    drawHouseTemplate(ctx1);
+                    break;
+                case 'parque':
+                    drawParkTemplate(ctx1);
+                    break;
+                case 'animais':
+                    drawAnimalsTemplate(ctx1);
+                    break;
+                case 'escola':
+                    drawSchoolTemplate(ctx1);
+                    break;
+                default:
+                    drawGrid(ctx1);
+            }
+            
+            copyToSecond();
+        }
+        
+        function drawHouseTemplate(ctx) {
+            // Casa simples
+            ctx.strokeRect(150, 150, 100, 80);  // Casa
+            ctx.beginPath();
+            ctx.moveTo(140, 150);
+            ctx.lineTo(200, 100);
+            ctx.lineTo(260, 150);
+            ctx.stroke();  // Telhado
+            
+            ctx.strokeRect(170, 180, 20, 30);  // Porta
+            ctx.strokeRect(200, 170, 15, 15);  // Janela
+            
+            // Sol
+            ctx.beginPath();
+            ctx.arc(320, 80, 20, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // Nuvem
+            ctx.beginPath();
+            ctx.arc(80, 60, 15, 0, 2 * Math.PI);
+            ctx.arc(95, 60, 20, 0, 2 * Math.PI);
+            ctx.arc(110, 60, 15, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+        
+        function drawParkTemplate(ctx) {
+            // Árvore
+            ctx.strokeRect(180, 180, 10, 40);  // Tronco
+            ctx.beginPath();
+            ctx.arc(185, 160, 30, 0, 2 * Math.PI);
+            ctx.stroke();  // Copa
+            
+            // Banco
+            ctx.strokeRect(250, 200, 60, 10);
+            ctx.strokeRect(260, 210, 5, 20);
+            ctx.strokeRect(295, 210, 5, 20);
+            
+            // Flor
+            ctx.beginPath();
+            ctx.arc(120, 180, 8, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.strokeRect(118, 188, 2, 20);
+        }
+        
+        function drawAnimalsTemplate(ctx) {
+            // Gato
+            ctx.beginPath();
+            ctx.arc(150, 180, 25, 0, 2 * Math.PI);  // Corpo
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(140, 160, 15, 0, 2 * Math.PI);  // Cabeça
+            ctx.stroke();
+            
+            // Orelhas
+            ctx.beginPath();
+            ctx.moveTo(135, 150);
+            ctx.lineTo(130, 140);
+            ctx.lineTo(140, 145);
+            ctx.stroke();
+            
+            // Pássaro
+            ctx.beginPath();
+            ctx.arc(280, 120, 12, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(270, 120);
+            ctx.lineTo(250, 115);
+            ctx.lineTo(250, 125);
+            ctx.stroke();  // Asa
+        }
+        
+        function drawSchoolTemplate(ctx) {
+            // Prédio da escola
+            ctx.strokeRect(120, 120, 160, 100);
+            
+            // Janelas
+            ctx.strokeRect(140, 140, 20, 20);
+            ctx.strokeRect(180, 140, 20, 20);
+            ctx.strokeRect(220, 140, 20, 20);
+            
+            // Porta
+            ctx.strokeRect(190, 180, 20, 40);
+            
+            // Quadra
+            ctx.strokeRect(300, 160, 80, 60);
+        }
+        
+        function drawGrid(ctx) {
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            
+            // Linhas verticais
+            for(let x = 0; x <= canvas1.width; x += 20) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas1.height);
+                ctx.stroke();
+            }
+            
+            // Linhas horizontais
+            for(let y = 0; y <= canvas1.height; y += 20) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas1.width, y);
+                ctx.stroke();
+            }
+        }
+        
+        function copyToSecond() {
+            const imageData = ctx1.getImageData(0, 0, canvas1.width, canvas1.height);
+            ctx2.putImageData(imageData, 0, 0);
+        }
+        
+        function addDifference() {
+            differenceMode = !differenceMode;
+            const btn = event.target;
+            if (differenceMode) {
+                btn.textContent = '✅ Modo: Diferença Ativo';
+                btn.style.background = '#48bb78';
+            } else {
+                btn.textContent = '➕ Modo: Adicionar Diferença';
+                btn.style.background = '';
+            }
+        }
+        
+        function clearAll() {
+            ctx1.fillStyle = 'white';
+            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
+            ctx2.fillStyle = 'white';
+            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
+        }
+    </script>
+</body>
+</html>
