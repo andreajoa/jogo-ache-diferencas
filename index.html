@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criador de Jogo "Ache as Diferenças"</title>
+    <title>🎨 Arte Cutting-Edge - Ache as Diferenças</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,20 +16,16 @@
         }
         
         body {
-            font-family: 'Comic Sans MS', cursive;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
+            padding: 20px;
         }
         
         .header {
@@ -33,505 +33,1156 @@
             margin-bottom: 30px;
         }
         
-        .header h1 {
-            color: #4c51bf;
-            font-size: 2.5rem;
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
         
-        .header p {
-            color: #666;
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
             font-size: 1.1rem;
         }
         
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        label {
-            font-weight: bold;
-            color: #4c51bf;
-            font-size: 0.9rem;
-        }
-        
-        select, input {
-            padding: 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        select:focus, input:focus {
-            outline: none;
-            border-color: #4c51bf;
-            box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.1);
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        .game-area {
-            display: flex;
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
             gap: 30px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
-        }
-        
-        .canvas-container {
-            text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border: 3px solid #e2e8f0;
-        }
-        
-        .canvas-container h3 {
-            color: #4c51bf;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-        
-        canvas {
-            border: 2px solid #cbd5e0;
-            border-radius: 10px;
-            cursor: crosshair;
-            transition: all 0.3s ease;
-        }
-        
-        canvas:hover {
-            border-color: #4c51bf;
-            box-shadow: 0 0 15px rgba(76, 81, 191, 0.2);
-        }
-        
-        .print-area {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: #f7fafc;
-            border-radius: 15px;
-            border: 2px dashed #cbd5e0;
-        }
-        
-        .instructions {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .instructions h3 {
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .instructions ol {
-            margin-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 5px;
-        }
-        
-        .tools {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .tool-btn {
-            padding: 8px 15px;
-            border: 2px solid #e2e8f0;
-            background: white;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-        
-        .tool-btn.active {
-            background: #4c51bf;
-            color: white;
-            border-color: #4c51bf;
-        }
-        
-        .tool-btn:hover {
-            border-color: #4c51bf;
-            transform: translateY(-1px);
+            align-items: start;
         }
         
         @media (max-width: 768px) {
-            .game-area {
-                flex-direction: column;
-                align-items: center;
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
-            
-            .controls {
-                flex-direction: column;
+            .title {
+                font-size: 2rem;
             }
-            
-            canvas {
-                max-width: 100%;
-                height: auto;
+        }
+        
+        .sidebar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tool-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .tool-btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tool-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .tool-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .section-title {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        .brush-types {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .brush-btn {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.7rem;
+            transition: all 0.2s ease;
+        }
+        
+        .brush-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .brush-btn.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-color: transparent;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        .size-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .size-btn {
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.2s ease;
+        }
+        
+        .size-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .size-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .preview-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .preview-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+        }
+        
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .action-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .canvas-area {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .canvas-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .zoom-btn {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .zoom-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .primary-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .canvas-container {
+            position: relative;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .paint-canvas {
+            width: 100%;
+            height: 400px;
+            display: block;
+            cursor: crosshair;
+            touch-action: none;
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(74, 144, 226, 0.2);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+            border-radius: 10px;
+            color: rgba(173, 216, 230, 1);
+            font-size: 0.85rem;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .close-btn {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .close-btn:hover {
+            color: white;
+        }
+        
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .category-title {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        
+        .text-input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 15px;
+            resize: none;
+        }
+        
+        .text-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .select option {
+            background: #333;
+            color: white;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+        }
+        
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .mobile-tip {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            text-align: center;
+            font-size: 0.8rem;
+            z-index: 100;
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-tip {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🔍 Criador de "Ache as Diferenças"</h1>
-            <p>Crie atividades personalizadas para desenvolver atenção e foco!</p>
-        </div>
-        
-        <div class="instructions">
-            <h3>📋 Como usar:</h3>
-            <ol>
-                <li>Escolha um tema e desenhe na <strong>Imagem Original</strong></li>
-                <li>A <strong>Imagem com Diferenças</strong> será copiada automaticamente</li>
-                <li>Clique em "Adicionar Diferença" e modifique a segunda imagem</li>
-                <li>Imprima as duas versões para criar sua atividade!</li>
-            </ol>
-        </div>
-        
-        <div class="controls">
-            <div class="control-group">
-                <label for="theme">🎨 Tema:</label>
-                <select id="theme">
-                    <option value="casa">Casa</option>
-                    <option value="parque">Parque</option>
-                    <option value="animais">Animais</option>
-                    <option value="escola">Escola</option>
-                    <option value="livre">Desenho Livre</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label for="difficulty">📊 Dificuldade:</label>
-                <select id="difficulty">
-                    <option value="facil">Fácil (3-5 diferenças)</option>
-                    <option value="medio">Médio (6-8 diferenças)</option>
-                    <option value="dificil">Difícil (9+ diferenças)</option>
-                </select>
-            </div>
-            
-            <button class="btn" onclick="generateTemplate()">🎯 Gerar Template</button>
-            <button class="btn" onclick="copyToSecond()">📋 Copiar para 2ª Imagem</button>
-            <button class="btn" onclick="clearAll()">🧹 Limpar Tudo</button>
-        </div>
-        
-        <div class="tools">
-            <div class="tool-btn active" data-tool="brush">🖌️ Pincel</div>
-            <div class="tool-btn" data-tool="eraser">🧽 Borracha</div>
-            <input type="color" id="colorPicker" value="#FF6B35" style="width: 50px; height: 35px; border-radius: 50%; border: 2px solid #e2e8f0;">
-            <input type="range" id="brushSize" min="1" max="20" value="5" style="width: 100px;">
-            <span id="brushSizeLabel">5px</span>
-        </div>
-        
-        <div class="game-area">
-            <div class="canvas-container">
-                <h3>🖼️ Imagem Original</h3>
-                <canvas id="canvas1" width="400" height="300"></canvas>
-            </div>
-            
-            <div class="canvas-container">
-                <h3>🔍 Imagem com Diferenças</h3>
-                <canvas id="canvas2" width="400" height="300"></canvas>
-                <div style="margin-top: 10px;">
-                    <button class="btn" onclick="addDifference()" style="font-size: 0.9rem; padding: 8px 15px;">➕ Modo: Adicionar Diferença</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="print-area">
-            <h3>🖨️ Pronto para Imprimir!</h3>
-            <p>Use Ctrl+P para imprimir ou salve as imagens clicando com o botão direito</p>
-            <button class="btn" onclick="window.print()">🖨️ Imprimir Atividade</button>
-        </div>
-    </div>
+    <div id="root"></div>
 
-    <script>
-        const canvas1 = document.getElementById('canvas1');
-        const canvas2 = document.getElementById('canvas2');
-        const ctx1 = canvas1.getContext('2d');
-        const ctx2 = canvas2.getContext('2d');
-        
-        let currentTool = 'brush';
-        let isDrawing = false;
-        let currentColor = '#FF6B35';
-        let brushSize = 5;
-        let differenceMode = false;
-        
-        // Configurações iniciais
-        ctx1.fillStyle = 'white';
-        ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
-        ctx2.fillStyle = 'white';
-        ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
-        
-        // Event listeners para ferramentas
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                currentTool = e.target.dataset.tool;
-            });
-        });
-        
-        document.getElementById('colorPicker').addEventListener('change', (e) => {
-            currentColor = e.target.value;
-        });
-        
-        document.getElementById('brushSize').addEventListener('input', (e) => {
-            brushSize = e.target.value;
-            document.getElementById('brushSizeLabel').textContent = brushSize + 'px';
-        });
-        
-        // Funções de desenho
-        function startDrawing(e, canvas, ctx) {
-            isDrawing = true;
-            draw(e, canvas, ctx);
-        }
-        
-        function draw(e, canvas, ctx) {
-            if (!isDrawing) return;
-            
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            ctx.lineWidth = brushSize;
-            ctx.lineCap = 'round';
-            
-            if (currentTool === 'brush') {
-                ctx.globalCompositeOperation = 'source-over';
-                ctx.strokeStyle = currentColor;
-            } else if (currentTool === 'eraser') {
-                ctx.globalCompositeOperation = 'destination-out';
-            }
-            
-            ctx.lineTo(x, y);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-        }
-        
-        function stopDrawing(ctx) {
-            if (isDrawing) {
-                ctx.beginPath();
-                isDrawing = false;
-            }
-        }
-        
-        // Eventos do canvas 1
-        canvas1.addEventListener('mousedown', (e) => startDrawing(e, canvas1, ctx1));
-        canvas1.addEventListener('mousemove', (e) => draw(e, canvas1, ctx1));
-        canvas1.addEventListener('mouseup', () => stopDrawing(ctx1));
-        canvas1.addEventListener('mouseout', () => stopDrawing(ctx1));
-        
-        // Eventos do canvas 2
-        canvas2.addEventListener('mousedown', (e) => startDrawing(e, canvas2, ctx2));
-        canvas2.addEventListener('mousemove', (e) => draw(e, canvas2, ctx2));
-        canvas2.addEventListener('mouseup', () => stopDrawing(ctx2));
-        canvas2.addEventListener('mouseout', () => stopDrawing(ctx2));
-        
-        // Funções principais
-        function generateTemplate() {
-            const theme = document.getElementById('theme').value;
-            
-            // Limpar canvas
-            ctx1.fillStyle = 'white';
-            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
-            
-            // Desenhar template baseado no tema
-            ctx1.strokeStyle = '#333';
-            ctx1.lineWidth = 2;
-            
-            switch(theme) {
-                case 'casa':
-                    drawHouseTemplate(ctx1);
-                    break;
-                case 'parque':
-                    drawParkTemplate(ctx1);
-                    break;
-                case 'animais':
-                    drawAnimalsTemplate(ctx1);
-                    break;
-                case 'escola':
-                    drawSchoolTemplate(ctx1);
-                    break;
-                default:
-                    drawGrid(ctx1);
-            }
-            
-            copyToSecond();
-        }
-        
-        function drawHouseTemplate(ctx) {
-            // Casa simples
-            ctx.strokeRect(150, 150, 100, 80);  // Casa
-            ctx.beginPath();
-            ctx.moveTo(140, 150);
-            ctx.lineTo(200, 100);
-            ctx.lineTo(260, 150);
-            ctx.stroke();  // Telhado
-            
-            ctx.strokeRect(170, 180, 20, 30);  // Porta
-            ctx.strokeRect(200, 170, 15, 15);  // Janela
-            
-            // Sol
-            ctx.beginPath();
-            ctx.arc(320, 80, 20, 0, 2 * Math.PI);
-            ctx.stroke();
-            
-            // Nuvem
-            ctx.beginPath();
-            ctx.arc(80, 60, 15, 0, 2 * Math.PI);
-            ctx.arc(95, 60, 20, 0, 2 * Math.PI);
-            ctx.arc(110, 60, 15, 0, 2 * Math.PI);
-            ctx.stroke();
-        }
-        
-        function drawParkTemplate(ctx) {
-            // Árvore
-            ctx.strokeRect(180, 180, 10, 40);  // Tronco
-            ctx.beginPath();
-            ctx.arc(185, 160, 30, 0, 2 * Math.PI);
-            ctx.stroke();  // Copa
-            
-            // Banco
-            ctx.strokeRect(250, 200, 60, 10);
-            ctx.strokeRect(260, 210, 5, 20);
-            ctx.strokeRect(295, 210, 5, 20);
-            
-            // Flor
-            ctx.beginPath();
-            ctx.arc(120, 180, 8, 0, 2 * Math.PI);
-            ctx.stroke();
-            ctx.strokeRect(118, 188, 2, 20);
-        }
-        
-        function drawAnimalsTemplate(ctx) {
-            // Gato
-            ctx.beginPath();
-            ctx.arc(150, 180, 25, 0, 2 * Math.PI);  // Corpo
-            ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.arc(140, 160, 15, 0, 2 * Math.PI);  // Cabeça
-            ctx.stroke();
-            
-            // Orelhas
-            ctx.beginPath();
-            ctx.moveTo(135, 150);
-            ctx.lineTo(130, 140);
-            ctx.lineTo(140, 145);
-            ctx.stroke();
-            
-            // Pássaro
-            ctx.beginPath();
-            ctx.arc(280, 120, 12, 0, 2 * Math.PI);
-            ctx.stroke();
-            
-            ctx.beginPath();
-            ctx.moveTo(270, 120);
-            ctx.lineTo(250, 115);
-            ctx.lineTo(250, 125);
-            ctx.stroke();  // Asa
-        }
-        
-        function drawSchoolTemplate(ctx) {
-            // Prédio da escola
-            ctx.strokeRect(120, 120, 160, 100);
-            
-            // Janelas
-            ctx.strokeRect(140, 140, 20, 20);
-            ctx.strokeRect(180, 140, 20, 20);
-            ctx.strokeRect(220, 140, 20, 20);
-            
-            // Porta
-            ctx.strokeRect(190, 180, 20, 40);
-            
-            // Quadra
-            ctx.strokeRect(300, 160, 80, 60);
-        }
-        
-        function drawGrid(ctx) {
-            ctx.strokeStyle = '#ddd';
-            ctx.lineWidth = 1;
-            
-            // Linhas verticais
-            for(let x = 0; x <= canvas1.width; x += 20) {
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, canvas1.height);
-                ctx.stroke();
-            }
-            
-            // Linhas horizontais
-            for(let y = 0; y <= canvas1.height; y += 20) {
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(canvas1.width, y);
-                ctx.stroke();
-            }
-        }
-        
-        function copyToSecond() {
-            const imageData = ctx1.getImageData(0, 0, canvas1.width, canvas1.height);
-            ctx2.putImageData(imageData, 0, 0);
-        }
-        
-        function addDifference() {
-            differenceMode = !differenceMode;
-            const btn = event.target;
-            if (differenceMode) {
-                btn.textContent = '✅ Modo: Diferença Ativo';
-                btn.style.background = '#48bb78';
-            } else {
-                btn.textContent = '➕ Modo: Adicionar Diferença';
-                btn.style.background = '';
-            }
-        }
-        
-        function clearAll() {
-            ctx1.fillStyle = 'white';
-            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
-            ctx2.fillStyle = 'white';
-            ctx2.fillRect(0, 0, canvas2.width, canvas2.height);
-        }
+    <script type="text/babel">
+        const { useState, useRef, useCallback, useEffect } = React;
+        const { Palette, PaintBucket, Brush, Type, Eraser, Undo, Download, Share2, ZoomIn, ZoomOut, RotateCcw } = lucide;
+
+        const PaintApp = () => {
+            const canvasRef = useRef(null);
+            const [currentTool, setCurrentTool] = useState('brush');
+            const [brushColor, setBrushColor] = useState('#3B82F6');
+            const [brushSize, setBrushSize] = useState(10);
+            const [brushType, setBrushType] = useState('round');
+            const [showColorPalette, setShowColorPalette] = useState(false);
+            const [showTextEditor, setShowTextEditor] = useState(false);
+            const [isDrawing, setIsDrawing] = useState(false);
+            const [lastPoint, setLastPoint] = useState(null);
+            const [textInput, setTextInput] = useState('');
+            const [zoom, setZoom] = useState(1);
+            const [canvasHistory, setCanvasHistory] = useState([]);
+            const [historyStep, setHistoryStep] = useState(-1);
+            const [selectedFont, setSelectedFont] = useState('Arial');
+            const [textSize, setTextSize] = useState(24);
+
+            const colorPalette = {
+                basics: ['#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'],
+                warm: ['#FF6B6B', '#FF8E53', '#FF6B35', '#F7931E', '#FFD23F', '#FFF75E', '#D4AF37', '#CD853F'],
+                cool: ['#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#6C5CE7', '#A29BFE', '#00B894', '#00CEC9'],
+                pastels: ['#FFE5E5', '#E5F3FF', '#E5FFE5', '#FFFFE5', '#F0E5FF', '#E5FFFF', '#FFE5F0', '#F5F5E5'],
+                neon: ['#FF073A', '#00FFF0', '#FFFF00', '#FF0099', '#00FF41', '#FF6600', '#9900FF', '#00FFFF'],
+                earth: ['#8B4513', '#D2691E', '#CD853F', '#DEB887', '#F4A460', '#DAA520', '#B8860B', '#A0522D'],
+                professional: ['#2C3E50', '#34495E', '#7F8C8D', '#95A5A6', '#BDC3C7', '#ECF0F1', '#E74C3C', '#E67E22'],
+                artistic: ['#9B59B6', '#8E44AD', '#3498DB', '#2980B9', '#1ABC9C', '#16A085', '#F39C12', '#D35400']
+            };
+
+            const brushTypes = [
+                { id: 'round', name: 'Redondo', icon: '●' },
+                { id: 'square', name: 'Quadrado', icon: '■' },
+                { id: 'spray', name: 'Spray', icon: '✨' },
+                { id: 'texture', name: 'Textura', icon: '🎨' },
+                { id: 'calligraphy', name: 'Caligrafia', icon: '✍️' },
+                { id: 'watercolor', name: 'Aquarela', icon: '🌈' }
+            ];
+
+            const textFonts = [
+                { name: 'Arial', style: 'Arial' },
+                { name: 'Comic Sans', style: 'Comic Sans MS' },
+                { name: 'Impact', style: 'Impact' },
+                { name: 'Times', style: 'Times New Roman' },
+                { name: 'Courier', style: 'Courier New' },
+                { name: 'Georgia', style: 'Georgia' }
+            ];
+
+            const categoryNames = {
+                basics: 'Básicas',
+                warm: 'Quentes', 
+                cool: 'Frias',
+                pastels: 'Pastéis',
+                neon: 'Neon',
+                earth: 'Terra',
+                professional: 'Profissionais',
+                artistic: 'Artísticas'
+            };
+
+            const saveToHistory = useCallback(() => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                
+                const dataURL = canvas.toDataURL();
+                const newHistory = canvasHistory.slice(0, historyStep + 1);
+                newHistory.push(dataURL);
+                setCanvasHistory(newHistory);
+                setHistoryStep(newHistory.length - 1);
+            }, [canvasHistory, historyStep]);
+
+            const undo = useCallback(() => {
+                if (historyStep > 0) {
+                    const canvas = canvasRef.current;
+                    const ctx = canvas?.getContext('2d');
+                    if (!ctx) return;
+
+                    const img = new Image();
+                    img.onload = () => {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = canvasHistory[historyStep - 1];
+                    setHistoryStep(historyStep - 1);
+                }
+            }, [historyStep, canvasHistory]);
+
+            const getEventPos = useCallback((e, canvas) => {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                
+                let clientX, clientY, pressure = 1;
+                
+                if (e.touches) {
+                    const touch = e.touches[0] || e.changedTouches[0];
+                    clientX = touch.clientX;
+                    clientY = touch.clientY;
+                    pressure = touch.force || 1;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                    pressure = e.pressure || 1;
+                }
+                
+                return {
+                    x: (clientX - rect.left) * scaleX / zoom,
+                    y: (clientY - rect.top) * scaleY / zoom,
+                    pressure: Math.min(Math.max(pressure, 0.1), 1)
+                };
+            }, [zoom]);
+
+            const floodFill = useCallback((startX, startY, fillColor) => {
+                const canvas = canvasRef.current;
+                const ctx = canvas?.getContext('2d');
+                if (!ctx) return;
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                const startPos = (startY * canvas.width + startX) * 4;
+                const startR = data[startPos];
+                const startG = data[startPos + 1];
+                const startB = data[startPos + 2];
+                const startA = data[startPos + 3];
+
+                const fillR = parseInt(fillColor.slice(1, 3), 16);
+                const fillG = parseInt(fillColor.slice(3, 5), 16);
+                const fillB = parseInt(fillColor.slice(5, 7), 16);
+
+                if (startR === fillR && startG === fillG && startB === fillB) return;
+
+                const pixelStack = [[startX, startY]];
+                const visited = new Set();
+
+                while (pixelStack.length) {
+                    const [x, y] = pixelStack.pop();
+                    const key = `${x},${y}`;
+                    
+                    if (visited.has(key) || x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) continue;
+                    visited.add(key);
+
+                    const pos = (y * canvas.width + x) * 4;
+                    
+                    if (data[pos] === startR && data[pos + 1] === startG && 
+                        data[pos + 2] === startB && data[pos + 3] === startA) {
+                        
+                        data[pos] = fillR;
+                        data[pos + 1] = fillG;
+                        data[pos + 2] = fillB;
+                        data[pos + 3] = 255;
+
+                        pixelStack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]);
+                    }
+                }
+
+                ctx.putImageData(imageData, 0, 0);
+                saveToHistory();
+            }, [saveToHistory]);
+
+            const applyBrushEffect = useCallback((ctx, x, y, size, pressure) => {
+                const adjustedSize = size * pressure;
+                
+                switch (brushType) {
+                    case 'round':
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        break;
+                    case 'square':
+                        ctx.lineCap = 'square';
+                        ctx.lineJoin = 'miter';
+                        break;
+                    case 'spray':
+                        ctx.save();
+                        const particles = Math.floor(adjustedSize / 2);
+                        for (let i = 0; i < particles; i++) {
+                            const angle = Math.random() * Math.PI * 2;
+                            const distance = Math.random() * adjustedSize;
+                            const dotX = x + Math.cos(angle) * distance;
+                            const dotY = y + Math.sin(angle) * distance;
+                            
+                            ctx.globalAlpha = Math.random() * 0.8 + 0.2;
+                            ctx.beginPath();
+                            ctx.arc(dotX, dotY, Math.random() * 3 + 1, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        ctx.restore();
+                        return;
+                    case 'texture':
+                        ctx.save();
+                        for (let i = 0; i < 8; i++) {
+                            const offsetX = (Math.random() - 0.5) * adjustedSize * 0.5;
+                            const offsetY = (Math.random() - 0.5) * adjustedSize * 0.5;
+                            ctx.globalAlpha = Math.random() * 0.4 + 0.1;
+                            ctx.beginPath();
+                            ctx.arc(x + offsetX, y + offsetY, adjustedSize * (Math.random() * 0.3 + 0.2), 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        ctx.restore();
+                        return;
+                    case 'watercolor':
+                        ctx.save();
+                        ctx.globalAlpha = 0.3;
+                        for (let i = 0; i < 5; i++) {
+                            const radius = adjustedSize * (0.8 + Math.random() * 0.4);
+                            const offsetX = (Math.random() - 0.5) * adjustedSize * 0.3;
+                            const offsetY = (Math.random() - 0.5) * adjustedSize * 0.3;
+                            ctx.beginPath();
+                            ctx.arc(x + offsetX, y + offsetY, radius, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        ctx.restore();
+                        return;
+                    case 'calligraphy':
+                        ctx.lineCap = 'round';
+                        ctx.lineWidth = adjustedSize * (pressure > 0.5 ? 1.5 : 0.5);
+                        break;
+                }
+            }, [brushType]);
+
+            const startDrawing = useCallback((e) => {
+                e.preventDefault();
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+
+                const pos = getEventPos(e, canvas);
+                
+                if (currentTool === 'bucket') {
+                    floodFill(Math.floor(pos.x), Math.floor(pos.y), brushColor);
+                    return;
+                }
+
+                setIsDrawing(true);
+                setLastPoint(pos);
+
+                if ('vibrate' in navigator && e.touches) {
+                    navigator.vibrate(10);
+                }
+
+                if (currentTool === 'brush') {
+                    const ctx = canvas.getContext('2d');
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.fillStyle = brushColor;
+                    ctx.strokeStyle = brushColor;
+                    applyBrushEffect(ctx, pos.x, pos.y, brushSize, pos.pressure);
+                }
+            }, [currentTool, brushColor, brushSize, getEventPos, floodFill, applyBrushEffect]);
+
+            const draw = useCallback((e) => {
+                if (!isDrawing || currentTool === 'bucket') return;
+                
+                const canvas = canvasRef.current;
+                const ctx = canvas?.getContext('2d');
+                if (!ctx) return;
+
+                const pos = getEventPos(e, canvas);
+                
+                if (currentTool === 'brush') {
+                    ctx.lineWidth = brushSize * pos.pressure;
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.strokeStyle = brushColor;
+                    ctx.fillStyle = brushColor;
+                    
+                    if (brushType === 'spray' || brushType === 'texture' || brushType === 'watercolor') {
+                        applyBrushEffect(ctx, pos.x, pos.y, brushSize, pos.pressure);
+                    } else {
+                        applyBrushEffect(ctx, 0, 0, 0, 0);
+                        if (lastPoint) {
+                            ctx.beginPath();
+                            ctx.moveTo(lastPoint.x, lastPoint.y);
+                            ctx.lineTo(pos.x, pos.y);
+                            ctx.stroke();
+                        }
+                    }
+                } else if (currentTool === 'eraser') {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.lineWidth = brushSize * pos.pressure;
+                    ctx.lineCap = 'round';
+                    
+                    if (lastPoint) {
+                        ctx.beginPath();
+                        ctx.moveTo(lastPoint.x, lastPoint.y);
+                        ctx.lineTo(pos.x, pos.y);
+                        ctx.stroke();
+                    }
+                }
+                
+                setLastPoint(pos);
+            }, [isDrawing, currentTool, brushColor, brushSize, getEventPos, lastPoint, applyBrushEffect, brushType]);
+
+            const stopDrawing = useCallback(() => {
+                if (isDrawing) {
+                    setIsDrawing(false);
+                    setLastPoint(null);
+                    saveToHistory();
+                }
+            }, [isDrawing, saveToHistory]);
+
+            const addText = useCallback(() => {
+                if (!textInput.trim()) return;
+                
+                const canvas = canvasRef.current;
+                const ctx = canvas?.getContext('2d');
+                if (!ctx) return;
+
+                ctx.fillStyle = brushColor;
+                ctx.font = `${textSize}px ${selectedFont}`;
+                ctx.textAlign = 'center';
+                ctx.fillText(textInput, canvas.width / 2, canvas.height / 2);
+                
+                setTextInput('');
+                setShowTextEditor(false);
+                saveToHistory();
+            }, [textInput, brushColor, textSize, selectedFont, saveToHistory]);
+
+            const clearCanvas = useCallback(() => {
+                const canvas = canvasRef.current;
+                const ctx = canvas?.getContext('2d');
+                if (!ctx) return;
+                
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                saveToHistory();
+            }, [saveToHistory]);
+
+            const downloadImage = useCallback(() => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                
+                const link = document.createElement('a');
+                link.download = `ache-diferencas-${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }, []);
+
+            const shareImage = useCallback(async () => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                
+                canvas.toBlob(async (blob) => {
+                    if (navigator.share && blob) {
+                        const file = new File([blob], 'minha-arte.png', { type: 'image/png' });
+                        try {
+                            await navigator.share({
+                                title: 'Minha Arte - Ache as Diferenças',
+                                files: [file]
+                            });
+                        } catch (err) {
+                            console.log('Erro ao compartilhar:', err);
+                        }
+                    }
+                });
+            }, []);
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+
+                const ctx = canvas.getContext('2d');
+                const dpr = window.devicePixelRatio || 1;
+                
+                canvas.width = 800 * dpr;
+                canvas.height = 400 * dpr;
+                
+                ctx.scale(dpr, dpr);
+                canvas.style.width = '100%';
+                canvas.style.height = '400px';
+                
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                
+                saveToHistory();
+            }, [saveToHistory]);
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1 className="title">🎨 Arte Cutting-Edge</h1>
+                        <p className="subtitle">Crie atividades "Ache as Diferenças" incríveis!</p>
+                    </div>
+
+                    <div className="main-grid">
+                        <div className="sidebar">
+                            <h3 className="section-title">🪄 Ferramentas Mágicas</h3>
+                            <div className="tools-grid">
+                                <button 
+                                    className={`tool-btn ${currentTool === 'brush' ? 'active' : ''}`}
+                                    onClick={() => setCurrentTool('brush')}
+                                >
+                                    <div className="tool-icon">🖌️</div>
+                                    <div>Pincel IA</div>
+                                </button>
+                                <button 
+                                    className={`tool-btn ${currentTool === 'bucket' ? 'active' : ''}`}
+                                    onClick={() => setCurrentTool('bucket')}
+                                >
+                                    <div className="tool-icon">🪣</div>
+                                    <div>Balde Pro</div>
+                                </button>
+                                <button 
+                                    className={`tool-btn ${currentTool === 'eraser' ? 'active' : ''}`}
+                                    onClick={() => setCurrentTool('eraser')}
+                                >
+                                    <div className="tool-icon">🧽</div>
+                                    <div>Apagador</div>
+                                </button>
+                                <button 
+                                    className="tool-btn"
+                                    onClick={() => setShowTextEditor(true)}
+                                >
+                                    <div className="tool-icon">📝</div>
+                                    <div>Texto+</div>
+                                </button>
+                            </div>
+
+                            <h3 className="section-title">Configurações do Pincel</h3>
+                            
+                            <div style={{marginBottom: '15px'}}>
+                                <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px'}}>
+                                    <div 
+                                        style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            borderRadius: '50%',
+                                            border: '2px solid rgba(255,255,255,0.3)',
+                                            backgroundColor: brushColor
+                                        }}
+                                    />
+                                    <span style={{color: 'rgba(255,255,255,0.8)', fontSize: '0.8rem'}}>{brushColor}</span>
+                                </div>
+                            </div>
+                            
+                            <div style={{marginBottom: '15px'}}>
+                                <label style={{color: 'rgba(255,255,255,0.8)', fontSize: '0.8rem', marginBottom: '8px', display: 'block'}}>
+                                    Tipo:
+                                </label>
+                                <div className="brush-types">
+                                    {brushTypes.map(({ id, name, icon }) => (
+                                        <button
+                                            key={id}
+                                            className={`brush-btn ${brushType === id ? 'active' : ''}`}
+                                            onClick={() => setBrushType(id)}
+                                            title={name}
+                                        >
+                                            {icon}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div style={{marginBottom: '15px'}}>
+                                <label style={{color: 'rgba(255,255,255,0.8)', fontSize: '0.8rem', marginBottom: '8px', display: 'block'}}>
+                                    Tamanho: {brushSize}px
+                                </label>
+                                <input
+                                    type="range"
+                                    className="slider"
+                                    min="1"
+                                    max="100"
+                                    value={brushSize}
+                                    onChange={(e) => setBrushSize(parseInt(e.target.value))}
+                                />
+                                <div className="size-buttons">
+                                    {[2, 5, 10, 20, 50].map(size => (
+                                        <button
+                                            key={size}
+                                            className={`size-btn ${brushSize === size ? 'active' : ''}`}
+                                            onClick={() => setBrushSize(size)}
+                                        >
+                                            {size}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="preview-box">
+                                <div className="preview-label">Prévia:</div>
+                                <div 
+                                    style={{
+                                        width: `${Math.min(brushSize, 40)}px`,
+                                        height: `${Math.min(brushSize, 40)}px`,
+                                        backgroundColor: brushColor,
+                                        borderRadius: brushType === 'square' ? '2px' : '50%',
+                                        opacity: brushType === 'spray' ? 0.7 : 1,
+                                        margin: '0 auto',
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                />
+                            </div>
+
+                            <div style={{marginTop: '20px'}}>
+                                <button 
+                                    className="action-btn"
+                                    onClick={() => setShowColorPalette(true)}
+                                >
+                                    🎨 60+ Cores Profissionais
+                                </button>
+                                
+                                <button 
+                                    className="action-btn secondary"
+                                    onClick={undo}
+                                    disabled={historyStep <= 0}
+                                    style={{opacity: historyStep <= 0 ? 0.5 : 1}}
+                                >
+                                    ↶ Desfazer
+                                </button>
+                                
+                                <button 
+                                    className="action-btn secondary"
+                                    onClick={clearCanvas}
+                                    style={{background: 'rgba(239, 68, 68, 0.8)'}}
+                                >
+                                    🗑️ Limpar Tudo
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="canvas-area">
+                            <div className="canvas-controls">
+                                <div className="zoom-controls">
+                                    <button
+                                        className="zoom-btn"
+                                        onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+                                    >
+                                        ➖
+                                    </button>
+                                    <span style={{color: 'white', fontSize: '0.85rem'}}>{Math.round(zoom * 100)}%</span>
+                                    <button
+                                        className="zoom-btn"
+                                        onClick={() => setZoom(Math.min(3, zoom + 0.1))}
+                                    >
+                                        ➕
+                                    </button>
+                                </div>
+                                
+                                <div className="action-buttons">
+                                    <button className="primary-btn" onClick={downloadImage}>
+                                        💾 Baixar
+                                    </button>
+                                    <button className="primary-btn" onClick={shareImage}>
+                                        📤 Compartilhar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="canvas-container" style={{transform: `scale(${zoom})`, transformOrigin: 'top left'}}>
+                                <canvas
+                                    ref={canvasRef}
+                                    className="paint-canvas"
+                                    onMouseDown={startDrawing}
+                                    onMouseMove={draw}
+                                    onMouseUp={stopDrawing}
+                                    onMouseLeave={stopDrawing}
+                                    onTouchStart={startDrawing}
+                                    onTouchMove={draw}
+                                    onTouchEnd={stopDrawing}
+                                />
+                            </div>
+
+                            <div className="instructions">
+                                <strong>💡 Dica Pro:</strong> Use o {
+                                    currentTool === 'brush' ? 'pincel para desenhar com pressão variável' : 
+                                    currentTool === 'bucket' ? 'balde para preencher áreas grandes instantaneamente' : 
+                                    currentTool === 'eraser' ? 'apagador para corrigir detalhes' : 'ferramenta de texto para adicionar palavras'
+                                } • Pressione mais forte no celular para traços mais grossos!
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Color Palette Modal */}
+                    {showColorPalette && (
+                        <div className="modal">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h3 className="modal-title">🎨 Paleta Profissional</h3>
+                                    <button className="close-btn" onClick={() => setShowColorPalette(false)}>×</button>
+                                </div>
+
+                                {Object.entries(colorPalette).map(([category, colors]) => (
+                                    <div key={category} style={{marginBottom: '20px'}}>
+                                        <h4 className="category-title">{categoryNames[category]}</h4>
+                                        <div className="color-grid">
+                                            {colors.map((color) => (
+                                                <button
+                                                    key={color}
+                                                    className="color-btn"
+                                                    style={{backgroundColor: color}}
+                                                    onClick={() => {
+                                                        setBrushColor(color);
+                                                        setShowColorPalette(false);
+                                                    }}
+                                                    title={color}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+
+                                <div style={{marginTop: '30px'}}>
+                                    <label style={{color: 'rgba(255,255,255,0.8)', fontSize: '0.85rem', marginBottom: '8px', display: 'block'}}>
+                                        Cor Personalizada:
+                                    </label>
+                                    <div style={{display: 'flex', gap: '8px'}}>
+                                        <input
+                                            type="color"
+                                            value={brushColor}
+                                            onChange={(e) => setBrushColor(e.target.value)}
+                                            style={{width: '48px', height: '48px', borderRadius: '8px', border: '2px solid rgba(255,255,255,0.2)'}}
+                                        />
+                                        <input
+                                            type="text"
+                                            className="text-input"
+                                            value={brushColor}
+                                            onChange={(e) => setBrushColor(e.target.value)}
+                                            placeholder="#FF5733"
+                                            style={{flex: '1', margin: '0'}}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Text Editor Modal */}
+                    {showTextEditor && (
+                        <div className="modal">
+                            <div className="modal-content" style={{maxWidth: '400px'}}>
+                                <div className="modal-header">
+                                    <h3 className="modal-title">📝 Editor de Texto</h3>
+                                    <button className="close-btn" onClick={() => setShowTextEditor(false)}>×</button>
+                                </div>
+
+                                <div>
+                                    <label style={{color: 'rgba(255,255,255,0.8)', fontSize: '0.85rem', marginBottom: '8px', display: 'block'}}>
+                                        Texto:
+                                    </label>
+                                    <textarea
+                                        className="text-input"
+                                        value={textInput}
+                                        onChange={(e) => setTextInput(e.target.value)}
+                                        rows="3"
+                                        placeholder="Digite seu texto aqui..."
+                                    />
+
+                                    <label style={{color: 'rgba(255,255,255,0.8)', fontSize: '0.85rem', marginBottom: '8px', display: 'block'}}>
+                                        Fonte:
+                                    </label>
+                                    <select
+                                        className="select"
+                                        value={selectedFont}
+                                        onChange={(e) => setSelectedFont(e.target.value)}
+                                    >
+                                        {textFonts.map((font) => (
+                                            <option key={font.name} value={font.style}>
+                                                {font.name}
+                                            </option>
+                                        ))}
+                                    </select>
+
+                                    <label style={{color: 'rgba(255,255,255,0.8)', fontSize: '0.85rem', marginBottom: '8px', display: 'block'}}>
+                                        Tamanho: {textSize}px
+                                    </label>
+                                    <input
+                                        type="range"
+                                        className="slider"
+                                        min="12"
+                                        max="100"
+                                        value={textSize}
+                                        onChange={(e) => setTextSize(parseInt(e.target.value))}
+                                    />
+
+                                    <div className="preview-box" style={{marginTop: '15px'}}>
+                                        <div className="preview-label">Prévia:</div>
+                                        <div 
+                                            style={{
+                                                fontFamily: selectedFont,
+                                                fontSize: Math.min(textSize, 24) + 'px',
+                                                color: brushColor
+                                            }}
+                                        >
+                                            {textInput || 'Texto de exemplo'}
+                                        </div>
+                                    </div>
+
+                                    <div className="modal-buttons">
+                                        <button
+                                            className="modal-btn secondary"
+                                            onClick={() => setShowTextEditor(false)}
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button
+                                            className="modal-btn primary"
+                                            onClick={addText}
+                                        >
+                                            Adicionar Texto
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="mobile-tip">
+                        🎯 Dica: Pressione mais forte na tela para traços mais grossos!
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<PaintApp />, document.getElementById('root'));
     </script>
 </body>
 </html>
