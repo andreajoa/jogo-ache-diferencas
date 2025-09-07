@@ -5,27 +5,19 @@ const ColoringApp = () => {
 const canvasRef = useRef(null);
 const [tool, setTool] = useState('brush');
 const [color, setColor] = useState('#FF6B6B');
-const [size, setSize] = useState(15);
+const [size, setSize] = useState(8);
 const [opacity, setOpacity] = useState(1);
 const [showPalette, setShowPalette] = useState(false);
 const [isDrawing, setIsDrawing] = useState(false);
 const [lastPos, setLastPos] = useState(null);
 const [history, setHistory] = useState([]);
 const [historyIndex, setHistoryIndex] = useState(-1);
-const [showScenes, setShowScenes] = useState(false);
 
 const colors = {
-neon: ['#ff0080', '#8000ff', '#0080ff', '#00ff80', '#ffff00', '#ff8000'],
-ocean: ['#001f3f', '#0074D9', '#7FDBFF', '#39CCCC', '#01FF70', '#2ECC40'],
-sunset: ['#FF851B', '#FF4136', '#DC143C', '#B10DC9', '#7B68EE', '#6495ED'],
-pastel: ['#FFB3E6', '#FFB3B3', '#FFFFB3', '#B3FFB3', '#B3FFFF', '#B3B3FF']
-};
-
-const scenes = {
-market: { name: 'Magic Market', icon: '🏪' },
-garden: { name: 'Fairy Garden', icon: '🌺' },
-castle: { name: 'Dream Castle', icon: '🏰' },
-ocean: { name: 'Ocean World', icon: '🌊' }
+neon: ['#FF0080', '#8000FF', '#0080FF', '#00FF80', '#FFFF00', '#FF8000', '#FF4081', '#E91E63'],
+ocean: ['#001F3F', '#0074D9', '#7FDBFF', '#39CCCC', '#01FF70', '#2ECC40', '#1ABC9C', '#16A085'],
+sunset: ['#FF851B', '#FF4136', '#DC143C', '#B10DC9', '#7B68EE', '#6495ED', '#FF6347', '#FFD700'],
+pastel: ['#FFB3E6', '#FFB3B3', '#FFFFB3', '#B3FFB3', '#B3FFFF', '#B3B3FF', '#E6B3FF', '#FFE6B3']
 };
 
 const saveHistory = useCallback(() => {
@@ -151,106 +143,210 @@ saveHistory();
 }
 }, [isDrawing, saveHistory]);
 
-const drawMarketScene = (ctx) => {
+const drawComplexMarket = (ctx) => {
 ctx.save();
-ctx.clearRect(0, 0, 800, 600);
+ctx.clearRect(0, 0, 900, 700);
 ctx.strokeStyle = '#000000';
-ctx.lineWidth = 2;
-ctx.fillStyle = 'transparent';
+ctx.lineWidth = 2.5;
+ctx.fillStyle = '#FFFFFF';
+ctx.fillRect(0, 0, 900, 700);
 ctx.lineCap = 'round';
 ctx.lineJoin = 'round';
-ctx.strokeRect(50, 100, 700, 400);
-ctx.strokeRect(80, 130, 60, 50);
-ctx.strokeRect(660, 130, 60, 50);
-ctx.strokeRect(375, 450, 50, 50);
-ctx.strokeRect(385, 470, 8, 15);
+
+ctx.strokeRect(50, 120, 800, 480);
+ctx.strokeRect(70, 140, 80, 60);
+ctx.strokeRect(740, 140, 80, 60);
+ctx.strokeRect(410, 550, 80, 50);
+ctx.strokeRect(422, 570, 12, 18);
 ctx.beginPath();
-ctx.moveTo(40, 100);
-ctx.lineTo(400, 50);
-ctx.lineTo(760, 100);
+ctx.moveTo(40, 120);
+ctx.lineTo(450, 60);
+ctx.lineTo(860, 120);
 ctx.stroke();
-ctx.strokeRect(320, 70, 160, 30);
-ctx.strokeRect(80, 220, 100, 180);
-for(let i = 1; i < 6; i++) {
+ctx.strokeRect(380, 80, 140, 40);
+
+for(let i = 0; i < 15; i++) {
 ctx.beginPath();
-ctx.moveTo(80, 220 + i * 30);
-ctx.lineTo(180, 220 + i * 30);
-ctx.stroke();
-}
-for(let shelf = 0; shelf < 5; shelf++) {
-for(let item = 0; item < 6; item++) {
-ctx.strokeRect(85 + item * 15, 225 + shelf * 30, 12, 20);
-}
-}
-ctx.strokeRect(280, 300, 120, 100);
-ctx.strokeRect(290, 320, 30, 25);
-ctx.strokeRect(330, 320, 30, 25);
-ctx.strokeRect(370, 320, 20, 25);
-for(let i = 0; i < 8; i++) {
-ctx.beginPath();
-ctx.arc(295 + (i%3) * 10, 330 + Math.floor(i/3) * 8, 4, 0, Math.PI * 2);
-ctx.stroke();
-}
-ctx.strokeRect(520, 220, 80, 200);
-for(let i = 1; i < 4; i++) {
-ctx.beginPath();
-ctx.moveTo(520, 220 + i * 50);
-ctx.lineTo(600, 220 + i * 50);
-ctx.stroke();
-}
-for(let shelf = 0; shelf < 3; shelf++) {
-for(let bottle = 0; bottle < 5; bottle++) {
-ctx.strokeRect(530 + bottle * 12, 230 + shelf * 50, 8, 20);
-}
-}
-for(let x = 60; x < 740; x += 25) {
-for(let y = 520; y < 540; y += 15) {
-ctx.strokeRect(x, y, 20, 12);
-}
-}
-ctx.strokeRect(200, 430, 35, 25);
-ctx.beginPath();
-ctx.arc(205, 465, 6, 0, Math.PI * 2);
-ctx.arc(230, 465, 6, 0, Math.PI * 2);
-ctx.stroke();
-ctx.beginPath();
-ctx.arc(180, 390, 20, 0, Math.PI * 2);
-ctx.stroke();
-ctx.strokeRect(165, 405, 30, 35);
-ctx.beginPath();
-ctx.arc(175, 385, 1.5, 0, Math.PI * 2);
-ctx.arc(185, 385, 1.5, 0, Math.PI * 2);
-ctx.moveTo(175, 395);
-ctx.arc(180, 395, 5, 0, Math.PI);
-ctx.stroke();
-for(let x = 120; x < 680; x += 80) {
-ctx.strokeRect(x, 160, 25, 8);
-ctx.beginPath();
-ctx.arc(x + 12, 170, 6, 0, Math.PI * 2);
+ctx.moveTo(50 + i * 53, 120);
+ctx.lineTo(50 + i * 53, 600);
 ctx.stroke();
 }
 for(let i = 0; i < 12; i++) {
-ctx.strokeRect(100 + i * 50, 200 + (i%3) * 40, 10, 6);
+ctx.beginPath();
+ctx.moveTo(50, 120 + i * 40);
+ctx.lineTo(850, 120 + i * 40);
+ctx.stroke();
 }
+
+ctx.strokeRect(80, 220, 140, 280);
+for(let shelf = 0; shelf < 8; shelf++) {
+ctx.beginPath();
+ctx.moveTo(80, 220 + shelf * 35);
+ctx.lineTo(220, 220 + shelf * 35);
+ctx.stroke();
+}
+for(let shelf = 0; shelf < 8; shelf++) {
+for(let item = 0; item < 10; item++) {
+ctx.strokeRect(85 + item * 13, 225 + shelf * 35, 10, 25);
+if(shelf < 3) {
+ctx.beginPath();
+ctx.arc(90 + item * 13, 232 + shelf * 35, 3, 0, Math.PI * 2);
+ctx.stroke();
+}
+if(shelf >= 3 && shelf < 6) {
+ctx.strokeRect(87 + item * 13, 227 + shelf * 35, 6, 20);
+}
+if(shelf >= 6) {
+ctx.beginPath();
+ctx.rect(86 + item * 13, 226 + shelf * 35, 8, 8);
+ctx.rect(86 + item * 13, 238 + shelf * 35, 8, 12);
+ctx.stroke();
+}
+}
+}
+
+ctx.strokeRect(280, 300, 180, 140);
+ctx.strokeRect(290, 320, 50, 35);
+ctx.strokeRect(350, 320, 50, 35);
+ctx.strokeRect(410, 320, 40, 35);
+for(let row = 0; row < 4; row++) {
+for(let col = 0; col < 8; col++) {
+ctx.beginPath();
+ctx.arc(295 + col * 6, 325 + row * 7, 2.5, 0, Math.PI * 2);
+ctx.stroke();
+}
+}
+for(let row = 0; row < 3; row++) {
+for(let col = 0; col < 6; col++) {
+ctx.strokeRect(352 + col * 8, 322 + row * 10, 6, 8);
+}
+}
+for(let i = 0; i < 8; i++) {
+ctx.beginPath();
+ctx.arc(415 + (i%4) * 8, 325 + Math.floor(i/4) * 8, 3, 0, Math.PI * 2);
+ctx.stroke();
+}
+
+ctx.strokeRect(550, 220, 120, 280);
+for(let shelf = 0; shelf < 7; shelf++) {
+ctx.beginPath();
+ctx.moveTo(550, 220 + shelf * 40);
+ctx.lineTo(670, 220 + shelf * 40);
+ctx.stroke();
+}
+for(let shelf = 0; shelf < 7; shelf++) {
+for(let bottle = 0; bottle < 8; bottle++) {
+ctx.strokeRect(555 + bottle * 14, 225 + shelf * 40, 10, 30);
+ctx.strokeRect(557 + bottle * 14, 222 + shelf * 40, 6, 8);
+}
+}
+
+ctx.strokeRect(720, 280, 100, 180);
+for(let shelf = 0; shelf < 4; shelf++) {
+ctx.beginPath();
+ctx.moveTo(720, 280 + shelf * 45);
+ctx.lineTo(820, 280 + shelf * 45);
+ctx.stroke();
+}
+for(let shelf = 0; shelf < 4; shelf++) {
+for(let box = 0; box < 6; box++) {
+ctx.strokeRect(725 + box * 15, 285 + shelf * 45, 12, 35);
+ctx.strokeRect(727 + box * 15, 287 + shelf * 45, 8, 8);
+ctx.strokeRect(727 + box * 15, 297 + shelf * 45, 8, 20);
+}
+}
+
+for(let x = 60; x < 840; x += 30) {
+for(let y = 620; y < 680; y += 20) {
+ctx.strokeRect(x, y, 25, 15);
+ctx.beginPath();
+ctx.moveTo(x + 5, y + 5);
+ctx.lineTo(x + 20, y + 5);
+ctx.moveTo(x + 5, y + 10);
+ctx.lineTo(x + 20, y + 10);
+ctx.stroke();
+}
+}
+
+ctx.strokeRect(240, 480, 50, 35);
+ctx.beginPath();
+ctx.arc(250, 530, 8, 0, Math.PI * 2);
+ctx.arc(280, 530, 8, 0, Math.PI * 2);
+ctx.stroke();
+ctx.strokeRect(245, 455, 40, 25);
+
+ctx.beginPath();
+ctx.arc(200, 420, 25, 0, Math.PI * 2);
+ctx.stroke();
+ctx.strokeRect(180, 445, 40, 45);
+ctx.beginPath();
+ctx.arc(190, 410, 2, 0, Math.PI * 2);
+ctx.arc(210, 410, 2, 0, Math.PI * 2);
+ctx.moveTo(190, 425);
+ctx.arc(200, 425, 10, 0, Math.PI);
+ctx.stroke();
+ctx.strokeRect(185, 460, 30, 25);
+
+for(let x = 100; x < 800; x += 100) {
+ctx.strokeRect(x, 160, 35, 12);
+ctx.beginPath();
+ctx.arc(x + 17, 175, 8, 0, Math.PI * 2);
+ctx.stroke();
+ctx.strokeRect(x + 5, 180, 25, 5);
+}
+
+for(let i = 0; i < 20; i++) {
+ctx.strokeRect(80 + i * 35, 180 + (i%4) * 15, 15, 8);
+ctx.strokeRect(82 + i * 35, 182 + (i%4) * 15, 11, 4);
+}
+
+for(let x = 100; x < 600; x += 80) {
+for(let y = 240; y < 400; y += 60) {
+ctx.strokeRect(x, y, 25, 15);
+ctx.strokeRect(x + 30, y, 25, 15);
+ctx.beginPath();
+ctx.arc(x + 12, y + 7, 5, 0, Math.PI * 2);
+ctx.arc(x + 42, y + 7, 5, 0, Math.PI * 2);
+ctx.stroke();
+}
+}
+
+ctx.strokeRect(320, 460, 80, 60);
+for(let i = 0; i < 12; i++) {
+ctx.strokeRect(325 + (i%4) * 18, 465 + Math.floor(i/4) * 16, 15, 12);
+}
+
+for(let i = 0; i < 8; i++) {
+ctx.beginPath();
+ctx.arc(150 + i * 80, 200, 12, 0, Math.PI * 2);
+ctx.stroke();
+ctx.strokeRect(142 + i * 80, 215, 16, 20);
+}
+
+ctx.strokeRect(500, 450, 60, 40);
+for(let i = 0; i < 6; i++) {
+ctx.strokeRect(505 + (i%3) * 18, 455 + Math.floor(i/3) * 15, 15, 12);
+}
+
+for(let x = 120; x < 700; x += 60) {
+ctx.beginPath();
+ctx.moveTo(x, 140);
+ctx.lineTo(x + 20, 130);
+ctx.lineTo(x + 40, 140);
+ctx.lineTo(x + 30, 160);
+ctx.lineTo(x + 10, 160);
+ctx.closePath();
+ctx.stroke();
+}
+
 ctx.restore();
 };
-
-const loadScene = useCallback(() => {
-const canvas = canvasRef.current;
-const ctx = canvas?.getContext('2d');
-if (!ctx) return;
-ctx.fillStyle = '#FFFFFF';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-drawMarketScene(ctx);
-setShowScenes(false);
-saveHistory();
-}, [saveHistory]);
 
 const download = useCallback(() => {
 const canvas = canvasRef.current;
 if (!canvas) return;
 const link = document.createElement('a');
-link.download = `coloring-art-${Date.now()}.png`;
+link.download = `bobbie-art-${Date.now()}.png`;
 link.href = canvas.toDataURL();
 link.click();
 }, []);
@@ -259,9 +355,7 @@ const clearCanvas = useCallback(() => {
 const canvas = canvasRef.current;
 const ctx = canvas?.getContext('2d');
 if (!ctx) return;
-ctx.fillStyle = '#FFFFFF';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
-drawMarketScene(ctx);
+drawComplexMarket(ctx);
 saveHistory();
 }, [saveHistory]);
 
@@ -269,13 +363,11 @@ useEffect(() => {
 const canvas = canvasRef.current;
 if (!canvas) return;
 const ctx = canvas.getContext('2d');
-canvas.width = 800;
-canvas.height = 600;
-ctx.fillStyle = '#FFFFFF';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+canvas.width = 900;
+canvas.height = 700;
 ctx.imageSmoothingEnabled = true;
 ctx.imageSmoothingQuality = 'high';
-drawMarketScene(ctx);
+drawComplexMarket(ctx);
 const initialData = canvas.toDataURL();
 setHistory([initialData]);
 setHistoryIndex(0);
@@ -300,9 +392,6 @@ return (
 </div>
 </div>
 <div className="flex space-x-2">
-<button onClick={() => setShowScenes(true)} className="p-2 bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all duration-300">
-<Home className="w-5 h-5" />
-</button>
 <button onClick={download} className="p-2 bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all duration-300">
 <Download className="w-5 h-5" />
 </button>
@@ -332,7 +421,7 @@ Tools
 <h3 className="text-white font-semibold mb-4">Settings</h3>
 <div className="mb-4">
 <label className="text-white/80 text-sm mb-2 block">Size: {size}px</label>
-<input type="range" min="1" max="100" value={size} onChange={(e) => setSize(parseInt(e.target.value))} className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer" />
+<input type="range" min="1" max="50" value={size} onChange={(e) => setSize(parseInt(e.target.value))} className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer" />
 </div>
 <div className="mb-4">
 <label className="text-white/80 text-sm mb-2 block">Opacity: {Math.round(opacity * 100)}%</label>
@@ -352,10 +441,10 @@ Colors
 <div className="space-y-3">
 {Object.entries(colors).map(([cat, cols]) => (
 <div key={cat}>
-<h4 className="text-white/70 text-xs font-medium mb-2">{cat}</h4>
-<div className="grid grid-cols-6 gap-1">
+<h4 className="text-white/70 text-xs font-medium mb-2 capitalize">{cat}</h4>
+<div className="grid grid-cols-4 gap-2">
 {cols.map((c, i) => (
-<button key={i} onClick={() => setColor(c)} className={`w-8 h-8 rounded-lg border-2 transition-all duration-200 ${color === c ? 'border-white scale-110' : 'border-white/30 hover:border-white/60'}`} style={{ backgroundColor: c }} />
+<button key={i} onClick={() => setColor(c)} className={`w-10 h-10 rounded-lg border-2 transition-all duration-200 ${color === c ? 'border-white scale-110' : 'border-white/30 hover:border-white/60'}`} style={{ backgroundColor: c }} />
 ))}
 </div>
 </div>
@@ -378,29 +467,11 @@ Reset
 </div>
 <div className="flex-1">
 <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-4">
-<canvas ref={canvasRef} className="w-full h-auto max-h-[600px] bg-white rounded-lg shadow-2xl cursor-crosshair touch-none" onMouseDown={startDraw} onMouseMove={draw} onMouseUp={stopDraw} onMouseLeave={stopDraw} onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={stopDraw} />
+<canvas ref={canvasRef} className="w-full h-auto max-h-[700px] bg-white rounded-lg shadow-2xl cursor-crosshair touch-none" onMouseDown={startDraw} onMouseMove={draw} onMouseUp={stopDraw} onMouseLeave={stopDraw} onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={stopDraw} />
 </div>
 </div>
 </div>
 </div>
-{showScenes && (
-<div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-<div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-<h3 className="text-2xl font-bold text-white mb-4">Choose Scene</h3>
-<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-{Object.entries(scenes).map(([key, sc]) => (
-<button key={key} onClick={loadScene} className="p-4 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-all duration-300 hover:scale-105">
-<div className="text-3xl mb-2">{sc.icon}</div>
-<div className="text-sm font-medium">{sc.name}</div>
-</button>
-))}
-</div>
-<button onClick={() => setShowScenes(false)} className="mt-4 w-full p-3 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300">
-Cancel
-</button>
-</div>
-</div>
-)}
 <style jsx>{`
 input[type="range"] {
 -webkit-appearance: none;
